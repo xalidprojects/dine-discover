@@ -40,8 +40,13 @@ const Header = () => {
       <div className="container-custom flex items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2">
-          <span className="font-display text-2xl md:text-3xl font-semibold text-foreground">
-            La <span className="text-accent">Maison</span>
+          <span
+            className={`font-display text-2xl md:text-3xl font-semibold transition-colors ${
+              isScrolled ? "text-foreground" : "text-primary-foreground"
+            }`}
+          >
+            <span className="text-primary-foreground">La</span>{" "}
+            <span className="text-accent">Maison</span>
           </span>
         </Link>
 
@@ -52,9 +57,7 @@ const Header = () => {
               key={link.path}
               to={link.path}
               className={`text-sm font-medium tracking-wide uppercase transition-colors duration-300 hover:text-accent ${
-                location.pathname === link.path
-                  ? "text-accent"
-                  : "text-foreground/80"
+                location.pathname === link.path ? "text-accent" : "text-accent/80"
               }`}
             >
               {link.name}
@@ -71,7 +74,9 @@ const Header = () => {
 
         {/* Mobile Menu Toggle */}
         <button
-          className="lg:hidden p-2 text-foreground"
+          className={`lg:hidden p-2 transition-colors ${
+            isScrolled ? "text-foreground" : "text-primary-foreground"
+          }`}
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           aria-label="Menyu aç/bağla"
         >
@@ -93,9 +98,7 @@ const Header = () => {
               key={link.path}
               to={link.path}
               className={`text-xl font-display font-medium transition-all duration-300 hover:text-accent ${
-                location.pathname === link.path
-                  ? "text-accent"
-                  : "text-foreground/80"
+                location.pathname === link.path ? "text-accent" : "text-accent/80"
               }`}
               style={{
                 animationDelay: `${index * 50}ms`,
