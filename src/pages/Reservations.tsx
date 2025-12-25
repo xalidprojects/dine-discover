@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { format, isSameDay, parse, differenceInHours } from "date-fns";
+import { format, isSameDay, differenceInMinutes } from "date-fns";
 import { az } from "date-fns/locale";
 import { CalendarIcon, Clock, Users, Check, AlertCircle } from "lucide-react";
 import Header from "@/components/Header";
@@ -74,20 +74,19 @@ const Reservations = () => {
 
   const getAvailableTimeSlots = () => {
     if (!selectedDate) return timeSlots;
-    
+
     const now = new Date();
     const isToday = isSameDay(selectedDate, now);
-    
+
     if (!isToday) return timeSlots;
-    
-    // If today, only show times that are at least 4 hours from now
+
+    // Bu gün üçün yalnız 4 saat sonrakı vaxtları göstər
     return timeSlots.filter((time) => {
       const [hours, minutes] = time.split(":").map(Number);
       const slotTime = new Date(selectedDate);
       slotTime.setHours(hours, minutes, 0, 0);
-      
-      const hoursUntilSlot = differenceInHours(slotTime, now);
-      return hoursUntilSlot >= 4;
+
+      return differenceInMinutes(slotTime, now) >= 240;
     });
   };
 
@@ -96,30 +95,44 @@ const Reservations = () => {
   const onSubmit = async (data: ReservationFormData) => {
     setIsSubmitting(true);
     try {
-      // Check for existing reservations on the same day with less than 4 hours gap
+      const selectedDateStr = format(data.date, "yyyy-MM-dd");
+
       const { data: existingReservations, error: fetchError } = await supabase
         .from("reservations")
         .select("reservation_time")
-        .eq("reservation_date", format(data.date, "yyyy-MM-dd"))
+        .eq("reservation_date", selectedDateStr)
         .neq("status", "cancelled");
 
       if (fetchError) throw fetchError;
 
-      // Check if any existing reservation is within 4 hours
-      const selectedTime = parse(data.time, "HH:mm", new Date());
-      const hasConflict = existingReservations?.some((res) => {
-        const existingTime = parse(res.reservation_time, "HH:mm:ss", new Date());
-        const hoursDiff = Math.abs(differenceInHours(selectedTime, existingTime));
-        return hoursDiff < 4;
+      const [selH, selM] = data.time.split(":").map(Number);
+      const selectedDateTime = new Date(data.date);
+      selectedDateTime.setHours(selH, selM, 0, 0);
+
+      const hasConflict = (existingReservations ?? []).some((res) => {
+        const existing = String(res.reservation_time ?? "");
+        const existingHHMM = existing.slice(0, 5);
+
+        // Eyni saat artıq tutulubsa, rezerv ETMƏ
+        if (existingHHMM === data.time) return true;
+
+        // Eyni gün üçün minimum 4 saat ara şərti
+        const [exH, exM] = existingHHMM.split(":").map(Number);
+        if (Number.isNaN(exH) || Number.isNaN(exM)) return false;
+
+        const existingDateTime = new Date(data.date);
+        existingDateTime.setHours(exH, exM, 0, 0);
+
+        return Math.abs(differenceInMinutes(selectedDateTime, existingDateTime)) < 240;
       });
 
       if (hasConflict) {
         toast({
-          title: "Vaxt konflikt",
-          description: "Bu vaxt dilimində artıq rezervasiya var. Zəhmət olmasa başqa vaxt seçin (ən azı 4 saat ara olmalıdır).",
+          title: "Vaxt doludur",
+          description:
+            "Bu vaxt artıq rezerv olunub və ya eyni gün üçün 4 saat ara qaydasına düşmür. Zəhmət olmasa başqa vaxt seçin.",
           variant: "destructive",
         });
-        setIsSubmitting(false);
         return;
       }
 
@@ -127,7 +140,7 @@ const Reservations = () => {
         name: data.name,
         email: data.email,
         phone: data.phone,
-        reservation_date: format(data.date, "yyyy-MM-dd"),
+        reservation_date: selectedDateStr,
         reservation_time: data.time,
         guests: parseInt(data.guests.replace("+", "")),
         special_requests: data.specialRequests || null,
