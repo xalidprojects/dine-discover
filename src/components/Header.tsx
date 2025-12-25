@@ -4,12 +4,12 @@ import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const navLinks = [
-  { name: "Home", path: "/" },
-  { name: "Menu", path: "/menu" },
-  { name: "Reservations", path: "/reservations" },
-  { name: "About", path: "/about" },
-  { name: "Gallery", path: "/gallery" },
-  { name: "Contact", path: "/contact" },
+  { name: "Ana Səhifə", path: "/" },
+  { name: "Menyu", path: "/menu" },
+  { name: "Rezervasiya", path: "/reservations" },
+  { name: "Haqqımızda", path: "/about" },
+  { name: "Qalereya", path: "/gallery" },
+  { name: "Əlaqə", path: "/contact" },
 ];
 
 const Header = () => {
@@ -65,7 +65,7 @@ const Header = () => {
         {/* Desktop CTA */}
         <div className="hidden lg:flex items-center gap-4">
           <Button variant="gold" size="lg" asChild>
-            <Link to="/reservations">Reserve a Table</Link>
+            <Link to="/reservations">Masa Rezerv Et</Link>
           </Button>
         </div>
 
@@ -73,7 +73,7 @@ const Header = () => {
         <button
           className="lg:hidden p-2 text-foreground"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          aria-label="Toggle menu"
+          aria-label="Menyu aç/bağla"
         >
           {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
@@ -105,7 +105,7 @@ const Header = () => {
             </Link>
           ))}
           <Button variant="gold" size="xl" className="mt-4" asChild>
-            <Link to="/reservations">Reserve a Table</Link>
+            <Link to="/reservations">Masa Rezerv Et</Link>
           </Button>
         </nav>
       </div>

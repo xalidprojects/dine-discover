@@ -10,7 +10,7 @@ const InfoSection = () => {
       <div className="absolute inset-0">
         <img
           src={interiorImage}
-          alt="La Maison restaurant interior"
+          alt="La Maison restoran interyeri"
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-foreground/80" />
@@ -25,17 +25,17 @@ const InfoSection = () => {
                 <Clock size={28} />
               </div>
               <h3 className="font-display text-2xl font-semibold text-cream">
-                Opening Hours
+                İş Saatları
               </h3>
               <div className="space-y-2 text-cream/70">
                 <p>
-                  <span className="text-cream font-medium">Lunch:</span> 12:00 PM - 3:00 PM
+                  <span className="text-cream font-medium">Nahar:</span> 12:00 - 15:00
                 </p>
                 <p>
-                  <span className="text-cream font-medium">Dinner:</span> 6:00 PM - 11:00 PM
+                  <span className="text-cream font-medium">Şam:</span> 18:00 - 23:00
                 </p>
-                <p className="text-cream/50 text-sm pt-2">Tuesday - Sunday</p>
-                <p className="text-gold text-sm">Closed on Mondays</p>
+                <p className="text-cream/50 text-sm pt-2">Çərşənbə - Bazar</p>
+                <p className="text-gold text-sm">Bazar ertəsi bağlıdır</p>
               </div>
             </div>
 
@@ -43,14 +43,14 @@ const InfoSection = () => {
             <div className="space-y-6 opacity-0 animate-fade-in" style={{ animationDelay: "0.4s", animationFillMode: "forwards" }}>
               <div className="w-16 h-0.5 bg-gold mx-auto" />
               <h3 className="font-display text-3xl font-semibold text-cream">
-                Ready for an<br />
-                <span className="text-gold italic">Extraordinary</span> Evening?
+                <span className="text-gold italic">Əlavəolunmaz</span> Bir<br />
+                Axşama Hazırsınız?
               </h3>
               <p className="text-cream/70 max-w-xs mx-auto">
-                Book your table now and let us create an unforgettable dining experience for you.
+                İndi masanızı sifariş edin və sizin üçün unudulmaz yemək təcrübəsi yaradaq.
               </p>
               <Button variant="gold" size="xl" asChild>
-                <Link to="/reservations">Make a Reservation</Link>
+                <Link to="/reservations">Rezervasiya Et</Link>
               </Button>
             </div>
 
@@ -60,19 +60,19 @@ const InfoSection = () => {
                 <MapPin size={28} />
               </div>
               <h3 className="font-display text-2xl font-semibold text-cream">
-                Find Us
+                Bizi Tapın
               </h3>
               <div className="space-y-2 text-cream/70">
-                <p>123 Gourmet Avenue</p>
-                <p>New York, NY 10001</p>
+                <p>Neftçilər prospekti 123</p>
+                <p>Bakı, Azərbaycan</p>
                 <p className="pt-2">
-                  <a href="tel:+12125551234" className="text-gold hover:underline">
-                    (212) 555-1234
+                  <a href="tel:+994501234567" className="text-gold hover:underline">
+                    +994 50 123 45 67
                   </a>
                 </p>
                 <p>
-                  <a href="mailto:hello@lamaison.com" className="text-gold hover:underline">
-                    hello@lamaison.com
+                  <a href="mailto:hello@lamaison.az" className="text-gold hover:underline">
+                    hello@lamaison.az
                   </a>
                 </p>
               </div>

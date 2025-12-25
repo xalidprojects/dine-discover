@@ -3,23 +3,23 @@ import { Star, Quote } from "lucide-react";
 const testimonials = [
   {
     id: 1,
-    name: "Sarah Mitchell",
-    role: "Food Critic",
-    content: "An extraordinary culinary experience. The attention to detail in every dish is remarkable. La Maison has set a new standard for fine dining.",
+    name: "Aynur Məmmədova",
+    role: "Qida Tənqidçisi",
+    content: "Əladır! Hər yeməkdə detallara olan diqqət heyrətamizdir. La Maison fine dining üçün yeni standart qoyub.",
     rating: 5,
   },
   {
     id: 2,
-    name: "James Thompson",
-    role: "Regular Guest",
-    content: "From the moment you walk in, you're transported to another world. The ambiance, the service, and most importantly, the food - all exceptional.",
+    name: "Elçin Həsənov",
+    role: "Daimi Qonaq",
+    content: "İçəri daxil olduğunuz andan başqa bir dünyaya aparılırsınız. Atmosfer, xidmət və əsası yemək - hamısı əla!",
     rating: 5,
   },
   {
     id: 3,
-    name: "Elena Rodriguez",
-    role: "Wine Enthusiast",
-    content: "The wine pairing was absolutely divine. The sommelier's recommendations perfectly complemented each course. A truly memorable evening.",
+    name: "Leyla Əliyeva",
+    role: "Şərab Həvəskarı",
+    content: "Şərab cütləşdirmə mükəmməl idi. Sommelienin tövsiyələri hər kursu tamamlayırdı. Həqiqətən unudulmaz axşam.",
     rating: 5,
   },
 ];
@@ -31,10 +31,10 @@ const TestimonialsSection = () => {
         {/* Section Header */}
         <div className="text-center mb-16">
           <p className="text-accent uppercase tracking-[0.2em] text-sm font-medium mb-4">
-            Testimonials
+            Rəylər
           </p>
           <h2 className="heading-section text-foreground mb-4">
-            What Our Guests Say
+            Qonaqlarımız Nə Deyir
           </h2>
           <div className="divider-gold mt-6" />
         </div>

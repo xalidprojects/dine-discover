@@ -9,7 +9,7 @@ const HeroSection = () => {
       <div className="absolute inset-0">
         <img
           src={heroImage}
-          alt="La Maison Restaurant elegant dining experience"
+          alt="La Maison Restoranı zərif yemək təcrübəsi"
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-foreground/60 via-foreground/40 to-foreground/70" />
@@ -23,7 +23,7 @@ const HeroSection = () => {
             className="text-gold uppercase tracking-[0.3em] text-sm md:text-base font-medium opacity-0 animate-fade-in"
             style={{ animationDelay: "0.2s" }}
           >
-            Fine Dining Experience
+            Zərif Yemək Təcrübəsi
           </p>
 
           {/* Main Title */}
@@ -31,8 +31,8 @@ const HeroSection = () => {
             className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-semibold text-cream leading-tight opacity-0 animate-fade-in"
             style={{ animationDelay: "0.4s" }}
           >
-            Where Culinary<br />
-            <span className="text-gold italic">Art</span> Meets Tradition
+            Kulinariya<br />
+            <span className="text-gold italic">İncəsənəti</span> və Ənənə
           </h1>
 
           {/* Description */}
@@ -40,8 +40,8 @@ const HeroSection = () => {
             className="text-cream/80 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed opacity-0 animate-fade-in"
             style={{ animationDelay: "0.6s" }}
           >
-            Indulge in an extraordinary dining experience crafted with passion, 
-            precision, and the finest seasonal ingredients.
+            Ehtiras, dəqiqlik və ən təzə mövsümi inqrediyentlərlə hazırlanmış 
+            əlavəedilməz yemək təcrübəsinə qoşulun.
           </p>
 
           {/* CTA Buttons */}
@@ -55,14 +55,14 @@ const HeroSection = () => {
               asChild
               className="text-base"
             >
-              <Link to="/menu">View Our Menu</Link>
+              <Link to="/menu">Menyumuza Baxın</Link>
             </Button>
             <Button 
               size="xl" 
               asChild
               className="border-2 border-cream/30 bg-transparent text-cream hover:bg-cream/10 text-base"
             >
-              <Link to="/reservations">Reserve a Table</Link>
+              <Link to="/reservations">Masa Rezerv Edin</Link>
             </Button>
           </div>
         </div>

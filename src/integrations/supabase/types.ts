@@ -14,16 +14,161 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      menu_categories: {
+        Row: {
+          created_at: string
+          display_order: number
+          id: string
+          name_az: string
+          name_en: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          name_az: string
+          name_en: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          name_az?: string
+          name_en?: string
+        }
+        Relationships: []
+      }
+      menu_items: {
+        Row: {
+          category_id: string
+          created_at: string
+          description_az: string | null
+          description_en: string | null
+          id: string
+          image_url: string | null
+          is_available: boolean
+          is_gluten_free: boolean
+          is_spicy: boolean
+          is_vegan: boolean
+          name_az: string
+          name_en: string
+          price: number
+        }
+        Insert: {
+          category_id: string
+          created_at?: string
+          description_az?: string | null
+          description_en?: string | null
+          id?: string
+          image_url?: string | null
+          is_available?: boolean
+          is_gluten_free?: boolean
+          is_spicy?: boolean
+          is_vegan?: boolean
+          name_az: string
+          name_en: string
+          price: number
+        }
+        Update: {
+          category_id?: string
+          created_at?: string
+          description_az?: string | null
+          description_en?: string | null
+          id?: string
+          image_url?: string | null
+          is_available?: boolean
+          is_gluten_free?: boolean
+          is_spicy?: boolean
+          is_vegan?: boolean
+          name_az?: string
+          name_en?: string
+          price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "menu_items_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "menu_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reservations: {
+        Row: {
+          created_at: string
+          email: string
+          guests: number
+          id: string
+          name: string
+          phone: string
+          reservation_date: string
+          reservation_time: string
+          special_requests: string | null
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          guests: number
+          id?: string
+          name: string
+          phone: string
+          reservation_date: string
+          reservation_time: string
+          special_requests?: string | null
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          guests?: number
+          id?: string
+          name?: string
+          phone?: string
+          reservation_date?: string
+          reservation_time?: string
+          special_requests?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +295,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+    },
   },
 } as const
