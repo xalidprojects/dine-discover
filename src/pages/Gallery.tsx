@@ -7,15 +7,20 @@ import chefImage from "@/assets/chef.jpg";
 import interiorImage from "@/assets/interior.jpg";
 
 const galleryImages = [
-  { src: heroImage, alt: "Elegant dining setup at La Maison", category: "interior" },
-  { src: dishImage, alt: "Signature steak dish", category: "food" },
-  { src: interiorImage, alt: "Restaurant interior with chandelier", category: "interior" },
-  { src: chefImage, alt: "Chef preparing a dish", category: "team" },
-  { src: heroImage, alt: "Candlelit dinner setting", category: "interior" },
-  { src: dishImage, alt: "Gourmet presentation", category: "food" },
+  { src: heroImage, alt: "La Maison-da zərif yemək quruluşu", category: "interyer" },
+  { src: dishImage, alt: "İmza steak yeməyi", category: "yemək" },
+  { src: interiorImage, alt: "Çilçıraqla restoran interyeri", category: "interyer" },
+  { src: chefImage, alt: "Aşpaz yemək hazırlayır", category: "komanda" },
+  { src: heroImage, alt: "Şamlı yemək quruluşu", category: "interyer" },
+  { src: dishImage, alt: "Gurme təqdimat", category: "yemək" },
 ];
 
-const categories = ["all", "food", "interior", "team"];
+const categories = [
+  { key: "all", label: "Hamısı" },
+  { key: "yemək", label: "Yemək" },
+  { key: "interyer", label: "İnteryer" },
+  { key: "komanda", label: "Komanda" },
+];
 
 const Gallery = () => {
   const [activeCategory, setActiveCategory] = useState("all");
@@ -34,14 +39,14 @@ const Gallery = () => {
         <section className="pt-32 pb-16 bg-primary">
           <div className="container-custom text-center">
             <p className="text-accent uppercase tracking-[0.2em] text-sm font-medium mb-4">
-              Visual Journey
+              Vizual Səyahət
             </p>
             <h1 className="heading-display text-primary-foreground mb-6">
-              Our Gallery
+              Qalereyamız
             </h1>
             <p className="text-primary-foreground/70 max-w-2xl mx-auto text-lg">
-              Explore the beauty of La Maison through our collection of 
-              culinary creations, stunning interiors, and memorable moments.
+              La Maison-un gözəlliyini kulinariya yaradıcılığımız, 
+              heyrətamiz interyerlər və unudulmaz anlar kolleksiyamız vasitəsilə kəşf edin.
             </p>
           </div>
         </section>
@@ -52,15 +57,15 @@ const Gallery = () => {
             <div className="flex justify-center gap-2 flex-wrap">
               {categories.map((cat) => (
                 <button
-                  key={cat}
-                  onClick={() => setActiveCategory(cat)}
-                  className={`px-6 py-2 rounded-full text-sm font-medium capitalize transition-all duration-300 ${
-                    activeCategory === cat
+                  key={cat.key}
+                  onClick={() => setActiveCategory(cat.key)}
+                  className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                    activeCategory === cat.key
                       ? "bg-accent text-accent-foreground"
                       : "bg-muted text-muted-foreground hover:bg-muted/80"
                   }`}
                 >
-                  {cat}
+                  {cat.label}
                 </button>
               ))}
             </div>
@@ -85,7 +90,7 @@ const Gallery = () => {
                   />
                   <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/40 transition-colors duration-300 flex items-center justify-center">
                     <span className="text-cream font-display text-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      View
+                      Bax
                     </span>
                   </div>
                 </div>
@@ -108,7 +113,7 @@ const Gallery = () => {
             </button>
             <img
               src={selectedImage}
-              alt="Gallery image"
+              alt="Qalereya şəkli"
               className="max-w-full max-h-[90vh] object-contain rounded-lg"
               onClick={(e) => e.stopPropagation()}
             />

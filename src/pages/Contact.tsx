@@ -19,10 +19,10 @@ import {
 import { useToast } from "@/hooks/use-toast";
 
 const contactSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Please enter a valid email address"),
-  subject: z.string().min(5, "Subject must be at least 5 characters"),
-  message: z.string().min(20, "Message must be at least 20 characters"),
+  name: z.string().min(2, "Ad ən azı 2 simvol olmalıdır"),
+  email: z.string().email("Düzgün email ünvanı daxil edin"),
+  subject: z.string().min(5, "Mövzu ən azı 5 simvol olmalıdır"),
+  message: z.string().min(20, "Mesaj ən azı 20 simvol olmalıdır"),
 });
 
 type ContactFormData = z.infer<typeof contactSchema>;
@@ -30,23 +30,23 @@ type ContactFormData = z.infer<typeof contactSchema>;
 const contactInfo = [
   {
     icon: MapPin,
-    title: "Visit Us",
-    lines: ["123 Gourmet Avenue", "New York, NY 10001"],
+    title: "Ünvan",
+    lines: ["Neftçilər prospekti 123", "Bakı, Azərbaycan"],
   },
   {
     icon: Phone,
-    title: "Call Us",
-    lines: ["(212) 555-1234", "(212) 555-5678"],
+    title: "Telefon",
+    lines: ["+994 50 123 45 67", "+994 12 456 78 90"],
   },
   {
     icon: Mail,
-    title: "Email Us",
-    lines: ["hello@lamaison.com", "reservations@lamaison.com"],
+    title: "Email",
+    lines: ["hello@lamaison.az", "rezervasiya@lamaison.az"],
   },
   {
     icon: Clock,
-    title: "Opening Hours",
-    lines: ["Tue - Sun: 12PM - 3PM, 6PM - 11PM", "Closed on Mondays"],
+    title: "İş Saatları",
+    lines: ["Çr - Bz: 12:00 - 15:00, 18:00 - 23:00", "Bazar ertəsi bağlıdır"],
   },
 ];
 
@@ -65,11 +65,11 @@ const Contact = () => {
   });
 
   const onSubmit = (data: ContactFormData) => {
-    console.log("Contact form data:", data);
+    console.log("Əlaqə forması:", data);
     setIsSubmitted(true);
     toast({
-      title: "Message Sent!",
-      description: "We'll get back to you as soon as possible.",
+      title: "Mesaj Göndərildi!",
+      description: "Ən qısa zamanda sizinlə əlaqə saxlayacağıq.",
     });
   };
 
@@ -81,14 +81,14 @@ const Contact = () => {
         <section className="pt-32 pb-16 bg-primary">
           <div className="container-custom text-center">
             <p className="text-accent uppercase tracking-[0.2em] text-sm font-medium mb-4">
-              Get in Touch
+              Əlaqə
             </p>
             <h1 className="heading-display text-primary-foreground mb-6">
-              Contact Us
+              Bizimlə Əlaqə
             </h1>
             <p className="text-primary-foreground/70 max-w-2xl mx-auto text-lg">
-              We'd love to hear from you. Whether you have a question about our 
-              menu, want to plan a private event, or just want to say hello.
+              Sizdən eşitmək istərdik. Menyumuz haqqında sualınız olsun, 
+              özəl tədbir planlaşdırmaq istəyin, ya da sadəcə salam demək istəyin.
             </p>
           </div>
         </section>
@@ -122,7 +122,7 @@ const Contact = () => {
               {/* Contact Form */}
               <div>
                 <h2 className="heading-section text-foreground mb-8">
-                  Send Us a Message
+                  Mesaj Göndərin
                 </h2>
 
                 {isSubmitted ? (
@@ -131,11 +131,11 @@ const Contact = () => {
                       <Check size={32} />
                     </div>
                     <h3 className="font-display text-2xl font-semibold text-foreground mb-4">
-                      Thank You!
+                      Təşəkkür Edirik!
                     </h3>
                     <p className="text-muted-foreground mb-6">
-                      Your message has been sent successfully. 
-                      We'll respond within 24 hours.
+                      Mesajınız uğurla göndərildi. 
+                      24 saat ərzində cavab verəcəyik.
                     </p>
                     <Button
                       variant="gold"
@@ -144,7 +144,7 @@ const Contact = () => {
                         form.reset();
                       }}
                     >
-                      Send Another Message
+                      Başqa Mesaj Göndər
                     </Button>
                   </div>
                 ) : (
@@ -157,10 +157,10 @@ const Contact = () => {
                             name="name"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel className="text-foreground">Name</FormLabel>
+                                <FormLabel className="text-foreground">Ad</FormLabel>
                                 <FormControl>
                                   <Input
-                                    placeholder="Your name"
+                                    placeholder="Adınız"
                                     {...field}
                                     className="bg-background"
                                   />
@@ -178,7 +178,7 @@ const Contact = () => {
                                 <FormControl>
                                   <Input
                                     type="email"
-                                    placeholder="your@email.com"
+                                    placeholder="email@example.com"
                                     {...field}
                                     className="bg-background"
                                   />
@@ -193,10 +193,10 @@ const Contact = () => {
                           name="subject"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="text-foreground">Subject</FormLabel>
+                              <FormLabel className="text-foreground">Mövzu</FormLabel>
                               <FormControl>
                                 <Input
-                                  placeholder="What is this about?"
+                                  placeholder="Bu nə haqqındadır?"
                                   {...field}
                                   className="bg-background"
                                 />
@@ -210,10 +210,10 @@ const Contact = () => {
                           name="message"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="text-foreground">Message</FormLabel>
+                              <FormLabel className="text-foreground">Mesaj</FormLabel>
                               <FormControl>
                                 <Textarea
-                                  placeholder="Your message..."
+                                  placeholder="Mesajınız..."
                                   className="bg-background min-h-[150px]"
                                   {...field}
                                 />
@@ -224,7 +224,7 @@ const Contact = () => {
                         />
                         <Button type="submit" variant="gold" size="lg" className="w-full">
                           <Send size={18} />
-                          Send Message
+                          Mesajı Göndər
                         </Button>
                       </form>
                     </Form>
@@ -232,21 +232,21 @@ const Contact = () => {
                 )}
               </div>
 
-              {/* Map Placeholder */}
+              {/* Map */}
               <div>
                 <h2 className="heading-section text-foreground mb-8">
-                  Find Us
+                  Bizi Tapın
                 </h2>
                 <div className="bg-card rounded-xl overflow-hidden border border-border h-[400px] lg:h-full min-h-[400px]">
                   <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.9663095919355!2d-74.00425878428698!3d40.74076904379132!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c259bf5c1654f3%3A0xc80f9cfce5383d5d!2sGoogle!5e0!3m2!1sen!2sus!4v1635786994961!5m2!1sen!2sus"
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3039.4177077455!2d49.86751931525387!3d40.40926677936442!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40307d6bd6211cf9%3A0x343f6b5e7ae56c6b!2sBaku%2C%20Azerbaijan!5e0!3m2!1sen!2s!4v1635786994961!5m2!1sen!2s"
                     width="100%"
                     height="100%"
                     style={{ border: 0 }}
                     allowFullScreen
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
-                    title="La Maison Location"
+                    title="La Maison Məkanı"
                     className="grayscale hover:grayscale-0 transition-all duration-500"
                   />
                 </div>

@@ -6,18 +6,18 @@ import signatureDish from "@/assets/dish-signature.jpg";
 const highlights = [
   {
     icon: Award,
-    title: "Michelin Starred",
-    description: "Recognized for culinary excellence",
+    title: "Michelin Ulduzlu",
+    description: "Kulinariya mükəmməlliyi ilə tanınır",
   },
   {
     icon: Leaf,
-    title: "Farm to Table",
-    description: "Fresh, seasonal ingredients daily",
+    title: "Fermadan Süfrəyə",
+    description: "Hər gün təzə, mövsümi inqrediyentlər",
   },
   {
     icon: ChefHat,
-    title: "Master Chefs",
-    description: "World-renowned culinary team",
+    title: "Usta Aşpazlar",
+    description: "Dünya şöhrətli kulinariya komandası",
   },
 ];
 
@@ -31,14 +31,14 @@ const HighlightsSection = () => {
             <div className="aspect-square rounded-lg overflow-hidden shadow-2xl">
               <img
                 src={signatureDish}
-                alt="Signature dish at La Maison"
+                alt="La Maison-un imza yeməyi"
                 className="w-full h-full object-cover"
               />
             </div>
             {/* Floating Badge */}
             <div className="absolute -bottom-6 -right-6 bg-accent text-accent-foreground px-6 py-4 rounded-lg shadow-lg">
               <p className="font-display text-2xl font-bold">20+</p>
-              <p className="text-sm">Years of Excellence</p>
+              <p className="text-sm">İl Mükəmməllik</p>
             </div>
           </div>
 
@@ -46,21 +46,21 @@ const HighlightsSection = () => {
           <div className="space-y-8">
             <div>
               <p className="text-accent uppercase tracking-[0.2em] text-sm font-medium mb-4">
-                Our Story
+                Bizim Hekayəmiz
               </p>
               <h2 className="heading-section text-foreground mb-6">
-                A Culinary Journey<br />Like No Other
+                Misilsiz Bir<br />Kulinariya Səyahəti
               </h2>
               <p className="text-body mb-6">
-                At La Maison, we believe that dining is an art form. Each dish tells a story, 
-                crafted with meticulous attention to detail and a deep respect for culinary traditions. 
-                Our chefs combine time-honored techniques with innovative creativity to deliver 
-                an unforgettable gastronomic experience.
+                La Maison-da inanırıq ki, yemək bir sənət formasıdır. Hər yemək bir hekayə 
+                danışır, diqqətli detallara və kulinariya ənənələrinə dərin hörmətlə 
+                hazırlanır. Aşpazlarımız zamanla sınaqdan keçmiş texnikaları yenilikçi 
+                yaradıcılıqla birləşdirir.
               </p>
               <p className="text-body">
-                From the carefully curated ingredients sourced from local farms to the 
-                elegant presentation that graces your table, every element is designed to 
-                delight your senses and create lasting memories.
+                Yerli fermalardan diqqətlə seçilmiş inqrediyentlərdən tutmuş 
+                masanızı bəzəyən zərif təqdimatadək, hər element hisslərinizi 
+                sevindirmək üçün dizayn edilmişdir.
               </p>
             </div>
 
@@ -86,7 +86,7 @@ const HighlightsSection = () => {
             </div>
 
             <Button variant="gold" size="lg" asChild>
-              <Link to="/about">Discover Our Story</Link>
+              <Link to="/about">Hekayəmizi Kəşf Edin</Link>
             </Button>
           </div>
         </div>

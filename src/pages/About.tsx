@@ -9,23 +9,23 @@ import interiorImage from "@/assets/interior.jpg";
 const values = [
   {
     icon: Award,
-    title: "Excellence",
-    description: "We pursue perfection in every dish, every service, every experience.",
+    title: "Mükəmməllik",
+    description: "Hər yeməkdə, hər xidmətdə, hər təcrübədə mükəmməlliyə can atırıq.",
   },
   {
     icon: Heart,
-    title: "Passion",
-    description: "Our love for culinary arts drives everything we create.",
+    title: "Ehtiras",
+    description: "Kulinariya sənətinə olan sevgimiz yaratdığımız hər şeyi idarə edir.",
   },
   {
     icon: Users,
-    title: "Hospitality",
-    description: "Making every guest feel like family is our greatest joy.",
+    title: "Qonaqpərvərlik",
+    description: "Hər qonağı ailə kimi hiss etdirmək ən böyük sevincimizdir.",
   },
   {
     icon: Utensils,
-    title: "Innovation",
-    description: "Blending tradition with creativity to surprise and delight.",
+    title: "Yenilikçilik",
+    description: "Ənənəni yaradıcılıqla birləşdirərək sürpriz və sevinc yaradırıq.",
   },
 ];
 
@@ -38,14 +38,14 @@ const About = () => {
         <section className="pt-32 pb-16 bg-primary">
           <div className="container-custom text-center">
             <p className="text-accent uppercase tracking-[0.2em] text-sm font-medium mb-4">
-              Our Story
+              Bizim Hekayəmiz
             </p>
             <h1 className="heading-display text-primary-foreground mb-6">
-              About La Maison
+              La Maison Haqqında
             </h1>
             <p className="text-primary-foreground/70 max-w-2xl mx-auto text-lg">
-              A legacy of culinary excellence spanning two decades, 
-              where every meal tells a story of passion and craftsmanship.
+              İyirmi ildən artıq kulinariya mükəmməlliyi mirası, 
+              hər yeməyin ehtiras və ustalıq hekayəsi danışdığı yer.
             </p>
           </div>
         </section>
@@ -56,37 +56,37 @@ const About = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
               <div className="space-y-6">
                 <h2 className="heading-section text-foreground">
-                  A Journey of<br />
-                  <span className="text-accent italic">Culinary Excellence</span>
+                  <span className="text-accent italic">Kulinariya Mükəmməlliyi</span><br />
+                  Səyahəti
                 </h2>
                 <p className="text-body">
-                  Founded in 2004, La Maison began as a dream shared by two childhood friends 
-                  with a passion for French cuisine. What started as a small bistro in the 
-                  heart of New York has grown into one of the city's most celebrated fine 
-                  dining destinations.
+                  2004-cü ildə qurulan La Maison, Fransız mətbəxinə ehtirasla bağlı iki uşaqlıq 
+                  dostunun paylaşdığı bir xəyal olaraq başladı. Bakının mərkəzindəki kiçik 
+                  bistro kimi başlayan şey, şəhərin ən məşhur fine dining məkanlarından 
+                  birinə çevrildi.
                 </p>
                 <p className="text-body">
-                  Our philosophy is simple: source the finest ingredients, respect culinary 
-                  traditions, and never stop innovating. Every dish that leaves our kitchen 
-                  is a testament to this commitment—a harmonious blend of classic techniques 
-                  and contemporary creativity.
+                  Fəlsəfəmiz sadədir: ən yaxşı inqrediyentləri əldə edin, kulinariya 
+                  ənənələrinə hörmət edin və daim yenilik edin. Mətbəximizdən çıxan 
+                  hər yemək bu öhdəliyin təsdiqidir - klassik texnikaların və 
+                  müasir yaradıcılığın ahəngdar birləşməsi.
                 </p>
                 <p className="text-body">
-                  Over the years, we've been honored with numerous accolades, including a 
-                  Michelin star and recognition from the James Beard Foundation. But our 
-                  greatest achievement remains the smiles on our guests' faces and the 
-                  memories we help create.
+                  İllər ərzində çoxsaylı mükafatlarla, o cümlədən Michelin ulduzu və 
+                  James Beard Fondunun tanınması ilə şərəfləndik. Lakin ən böyük 
+                  nailiyyətimiz qonaqlarımızın üzündəki təbəssümlər və yaratmağa 
+                  kömək etdiyimiz xatirələr olaraq qalır.
                 </p>
               </div>
               <div className="relative">
                 <img
                   src={interiorImage}
-                  alt="La Maison interior"
+                  alt="La Maison interyeri"
                   className="w-full h-auto rounded-lg shadow-2xl"
                 />
                 <div className="absolute -bottom-6 -left-6 bg-accent text-accent-foreground p-6 rounded-lg shadow-lg">
                   <p className="font-display text-4xl font-bold">20+</p>
-                  <p className="text-sm">Years of Excellence</p>
+                  <p className="text-sm">İl Mükəmməllik</p>
                 </div>
               </div>
             </div>
@@ -98,10 +98,10 @@ const About = () => {
           <div className="container-custom">
             <div className="text-center mb-16">
               <p className="text-accent uppercase tracking-[0.2em] text-sm font-medium mb-4">
-                Our Philosophy
+                Fəlsəfəmiz
               </p>
               <h2 className="heading-section text-foreground">
-                Values We Live By
+                Yaşadığımız Dəyərlər
               </h2>
               <div className="divider-gold mt-6" />
             </div>
@@ -133,30 +133,30 @@ const About = () => {
               <div className="order-2 lg:order-1">
                 <img
                   src={chefImage}
-                  alt="Executive Chef"
+                  alt="Baş Aşpaz"
                   className="w-full h-auto rounded-lg shadow-2xl"
                 />
               </div>
               <div className="order-1 lg:order-2 space-y-6">
                 <p className="text-accent uppercase tracking-[0.2em] text-sm font-medium">
-                  Meet Our Chef
+                  Aşpazımızla Tanış Olun
                 </p>
                 <h2 className="heading-section text-foreground">
-                  Chef Marcus Beaumont
+                  Baş Aşpaz Kamran Hüseynov
                 </h2>
                 <p className="text-body">
-                  With over 25 years of culinary experience across three continents, 
-                  Chef Marcus Beaumont brings a unique perspective to La Maison's kitchen. 
-                  Trained in the legendary kitchens of Paris and Tokyo, he combines 
-                  classical French techniques with global influences.
+                  Üç qitədə 25 ildən artıq kulinariya təcrübəsi ilə Baş Aşpaz 
+                  Kamran Hüseynov La Maison-un mətbəxinə unikal perspektiv gətirir. 
+                  Paris və Tokionun əfsanəvi mətbəxlərində təlim keçmiş o, 
+                  klassik Fransız texnikalarını qlobal təsirlərlə birləşdirir.
                 </p>
                 <p className="text-body">
-                  "Cooking is not just about feeding people—it's about creating moments 
-                  of joy, connection, and wonder. Every plate is an opportunity to tell 
-                  a story and touch someone's heart."
+                  "Yemək bişirmək sadəcə insanları doyurmaq deyil - sevinc, 
+                  əlaqə və heyrət anları yaratmaqdır. Hər boşqab bir hekayə 
+                  danışmaq və kiminsə ürəyinə toxunmaq üçün fürsətdir."
                 </p>
                 <p className="font-display text-lg italic text-foreground">
-                  — Chef Marcus Beaumont
+                  — Baş Aşpaz Kamran Hüseynov
                 </p>
               </div>
             </div>
@@ -167,23 +167,23 @@ const About = () => {
         <section className="section-padding bg-primary text-center">
           <div className="container-custom max-w-3xl">
             <h2 className="heading-section text-primary-foreground mb-6">
-              Experience La Maison
+              La Maison-u Kəşf Edin
             </h2>
             <p className="text-primary-foreground/70 text-lg mb-8">
-              Join us for an unforgettable culinary journey. 
-              Reserve your table today and discover why La Maison 
-              is one of New York's most beloved dining destinations.
+              Unudulmaz kulinariya səyahətinə qoşulun. 
+              Masanızı indi rezerv edin və La Maison-un niyə Bakının 
+              ən sevilən yemək məkanlarından biri olduğunu kəşf edin.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button variant="gold" size="xl" asChild>
-                <Link to="/reservations">Reserve a Table</Link>
+                <Link to="/reservations">Masa Rezerv Edin</Link>
               </Button>
               <Button
                 size="xl"
                 asChild
                 className="border-2 border-primary-foreground/30 bg-transparent text-primary-foreground hover:bg-primary-foreground/10"
               >
-                <Link to="/menu">View Our Menu</Link>
+                <Link to="/menu">Menyumuza Baxın</Link>
               </Button>
             </div>
           </div>

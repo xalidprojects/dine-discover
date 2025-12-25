@@ -2,8 +2,9 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { format } from "date-fns";
-import { CalendarIcon, Clock, Users, Check } from "lucide-react";
+import { format, isSameDay, parse, differenceInHours } from "date-fns";
+import { az } from "date-fns/locale";
+import { CalendarIcon, Clock, Users, Check, AlertCircle } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -32,28 +33,31 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const reservationSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Please enter a valid email address"),
-  phone: z.string().min(10, "Please enter a valid phone number"),
-  date: z.date({ required_error: "Please select a date" }),
-  time: z.string({ required_error: "Please select a time" }),
-  guests: z.string({ required_error: "Please select number of guests" }),
+  name: z.string().min(2, "Ad ən azı 2 simvol olmalıdır"),
+  email: z.string().email("Düzgün email ünvanı daxil edin"),
+  phone: z.string().min(10, "Düzgün telefon nömrəsi daxil edin"),
+  date: z.date({ required_error: "Zəhmət olmasa tarix seçin" }),
+  time: z.string({ required_error: "Zəhmət olmasa saat seçin" }),
+  guests: z.string({ required_error: "Zəhmət olmasa qonaq sayını seçin" }),
   specialRequests: z.string().optional(),
 });
 
 type ReservationFormData = z.infer<typeof reservationSchema>;
 
 const timeSlots = [
-  "12:00 PM", "12:30 PM", "1:00 PM", "1:30 PM", "2:00 PM", "2:30 PM",
-  "6:00 PM", "6:30 PM", "7:00 PM", "7:30 PM", "8:00 PM", "8:30 PM", "9:00 PM", "9:30 PM",
+  "12:00", "12:30", "13:00", "13:30", "14:00", "14:30",
+  "18:00", "18:30", "19:00", "19:30", "20:00", "20:30", "21:00", "21:30",
 ];
 
 const guestOptions = ["1", "2", "3", "4", "5", "6", "7", "8+"];
 
 const Reservations = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
   const form = useForm<ReservationFormData>({
@@ -66,13 +70,85 @@ const Reservations = () => {
     },
   });
 
-  const onSubmit = (data: ReservationFormData) => {
-    console.log("Reservation data:", data);
-    setIsSubmitted(true);
-    toast({
-      title: "Reservation Confirmed!",
-      description: `We'll see you on ${format(data.date, "PPP")} at ${data.time}.`,
+  const selectedDate = form.watch("date");
+
+  const getAvailableTimeSlots = () => {
+    if (!selectedDate) return timeSlots;
+    
+    const now = new Date();
+    const isToday = isSameDay(selectedDate, now);
+    
+    if (!isToday) return timeSlots;
+    
+    // If today, only show times that are at least 4 hours from now
+    return timeSlots.filter((time) => {
+      const [hours, minutes] = time.split(":").map(Number);
+      const slotTime = new Date(selectedDate);
+      slotTime.setHours(hours, minutes, 0, 0);
+      
+      const hoursUntilSlot = differenceInHours(slotTime, now);
+      return hoursUntilSlot >= 4;
     });
+  };
+
+  const availableTimeSlots = getAvailableTimeSlots();
+
+  const onSubmit = async (data: ReservationFormData) => {
+    setIsSubmitting(true);
+    try {
+      // Check for existing reservations on the same day with less than 4 hours gap
+      const { data: existingReservations, error: fetchError } = await supabase
+        .from("reservations")
+        .select("reservation_time")
+        .eq("reservation_date", format(data.date, "yyyy-MM-dd"))
+        .neq("status", "cancelled");
+
+      if (fetchError) throw fetchError;
+
+      // Check if any existing reservation is within 4 hours
+      const selectedTime = parse(data.time, "HH:mm", new Date());
+      const hasConflict = existingReservations?.some((res) => {
+        const existingTime = parse(res.reservation_time, "HH:mm:ss", new Date());
+        const hoursDiff = Math.abs(differenceInHours(selectedTime, existingTime));
+        return hoursDiff < 4;
+      });
+
+      if (hasConflict) {
+        toast({
+          title: "Vaxt konflikt",
+          description: "Bu vaxt dilimində artıq rezervasiya var. Zəhmət olmasa başqa vaxt seçin (ən azı 4 saat ara olmalıdır).",
+          variant: "destructive",
+        });
+        setIsSubmitting(false);
+        return;
+      }
+
+      const { error } = await supabase.from("reservations").insert({
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        reservation_date: format(data.date, "yyyy-MM-dd"),
+        reservation_time: data.time,
+        guests: parseInt(data.guests.replace("+", "")),
+        special_requests: data.specialRequests || null,
+      });
+
+      if (error) throw error;
+
+      setIsSubmitted(true);
+      toast({
+        title: "Rezervasiya Təsdiqləndi!",
+        description: `${format(data.date, "d MMMM yyyy", { locale: az })} tarixində saat ${data.time}-da görüşəcəyik.`,
+      });
+    } catch (error) {
+      toast({
+        title: "Xəta",
+        description: "Rezervasiya göndərilərkən xəta baş verdi. Yenidən cəhd edin.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (isSubmitted) {
@@ -86,18 +162,18 @@ const Reservations = () => {
                 <Check size={40} />
               </div>
               <h1 className="heading-section text-foreground mb-4">
-                Reservation Confirmed!
+                Rezervasiya Təsdiqləndi!
               </h1>
               <p className="text-muted-foreground text-lg mb-8">
-                Thank you for choosing La Maison. We've sent a confirmation 
-                email with all the details. We look forward to welcoming you!
+                La Maison-u seçdiyiniz üçün təşəkkür edirik. Bütün detallarla 
+                təsdiq emaili göndərdik. Sizi gözləyirik!
               </p>
               <Button
                 variant="gold"
                 size="lg"
                 onClick={() => setIsSubmitted(false)}
               >
-                Make Another Reservation
+                Başqa Rezervasiya Et
               </Button>
             </div>
           </div>
@@ -115,14 +191,14 @@ const Reservations = () => {
         <section className="pt-32 pb-16 bg-primary">
           <div className="container-custom text-center">
             <p className="text-accent uppercase tracking-[0.2em] text-sm font-medium mb-4">
-              Table Reservations
+              Masa Rezervasiyası
             </p>
             <h1 className="heading-display text-primary-foreground mb-6">
-              Reserve Your Table
+              Masanızı Rezerv Edin
             </h1>
             <p className="text-primary-foreground/70 max-w-2xl mx-auto text-lg">
-              Secure your spot for an unforgettable dining experience. 
-              For parties larger than 8, please call us directly.
+              Unudulmaz yemək təcrübəsi üçün yerinizi təmin edin. 
+              8-dən çox qonaq üçün zəhmət olmasa birbaşa bizə zəng edin.
             </p>
           </div>
         </section>
@@ -130,6 +206,14 @@ const Reservations = () => {
         {/* Reservation Form */}
         <section className="section-padding bg-background">
           <div className="container-custom max-w-2xl">
+            <Alert className="mb-8 border-accent/50 bg-accent/10">
+              <AlertCircle className="h-4 w-4 text-accent" />
+              <AlertDescription className="text-foreground">
+                <strong>Diqqət:</strong> Rezervasiya üçün 4 saat vaxt limiti var. 
+                Eyni gün üçün rezervasiyalar arasında minimum 4 saat ara olmalıdır.
+              </AlertDescription>
+            </Alert>
+
             <div className="bg-card rounded-xl p-8 md:p-12 shadow-lg border border-border">
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -139,10 +223,10 @@ const Reservations = () => {
                     name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-foreground">Full Name</FormLabel>
+                        <FormLabel className="text-foreground">Ad Soyad</FormLabel>
                         <FormControl>
                           <Input
-                            placeholder="John Smith"
+                            placeholder="Adınız Soyadınız"
                             {...field}
                             className="bg-background"
                           />
@@ -163,7 +247,7 @@ const Reservations = () => {
                           <FormControl>
                             <Input
                               type="email"
-                              placeholder="john@example.com"
+                              placeholder="email@example.com"
                               {...field}
                               className="bg-background"
                             />
@@ -177,11 +261,11 @@ const Reservations = () => {
                       name="phone"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-foreground">Phone Number</FormLabel>
+                          <FormLabel className="text-foreground">Telefon Nömrəsi</FormLabel>
                           <FormControl>
                             <Input
                               type="tel"
-                              placeholder="(212) 555-1234"
+                              placeholder="+994 50 123 45 67"
                               {...field}
                               className="bg-background"
                             />
@@ -198,7 +282,7 @@ const Reservations = () => {
                     name="date"
                     render={({ field }) => (
                       <FormItem className="flex flex-col">
-                        <FormLabel className="text-foreground">Date</FormLabel>
+                        <FormLabel className="text-foreground">Tarix</FormLabel>
                         <Popover>
                           <PopoverTrigger asChild>
                             <FormControl>
@@ -210,7 +294,7 @@ const Reservations = () => {
                                 )}
                               >
                                 <CalendarIcon className="mr-2 h-4 w-4" />
-                                {field.value ? format(field.value, "PPP") : "Select a date"}
+                                {field.value ? format(field.value, "d MMMM yyyy", { locale: az }) : "Tarix seçin"}
                               </Button>
                             </FormControl>
                           </PopoverTrigger>
@@ -222,7 +306,7 @@ const Reservations = () => {
                               disabled={(date) => {
                                 const today = new Date();
                                 today.setHours(0, 0, 0, 0);
-                                return date < today || date.getDay() === 1; // Closed on Mondays
+                                return date < today || date.getDay() === 1; // Bazar ertəsi bağlıdır
                               }}
                               initialFocus
                               className="pointer-events-auto"
@@ -241,20 +325,26 @@ const Reservations = () => {
                       name="time"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-foreground">Time</FormLabel>
+                          <FormLabel className="text-foreground">Saat</FormLabel>
                           <Select onValueChange={field.onChange} defaultValue={field.value}>
                             <FormControl>
                               <SelectTrigger className="bg-background">
                                 <Clock className="mr-2 h-4 w-4 text-muted-foreground" />
-                                <SelectValue placeholder="Select a time" />
+                                <SelectValue placeholder="Saat seçin" />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              {timeSlots.map((time) => (
-                                <SelectItem key={time} value={time}>
-                                  {time}
+                              {availableTimeSlots.length > 0 ? (
+                                availableTimeSlots.map((time) => (
+                                  <SelectItem key={time} value={time}>
+                                    {time}
+                                  </SelectItem>
+                                ))
+                              ) : (
+                                <SelectItem value="none" disabled>
+                                  Bu gün üçün mövcud vaxt yoxdur
                                 </SelectItem>
-                              ))}
+                              )}
                             </SelectContent>
                           </Select>
                           <FormMessage />
@@ -266,18 +356,18 @@ const Reservations = () => {
                       name="guests"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-foreground">Number of Guests</FormLabel>
+                          <FormLabel className="text-foreground">Qonaq Sayı</FormLabel>
                           <Select onValueChange={field.onChange} defaultValue={field.value}>
                             <FormControl>
                               <SelectTrigger className="bg-background">
                                 <Users className="mr-2 h-4 w-4 text-muted-foreground" />
-                                <SelectValue placeholder="Select guests" />
+                                <SelectValue placeholder="Qonaq sayı seçin" />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
                               {guestOptions.map((num) => (
                                 <SelectItem key={num} value={num}>
-                                  {num} {num === "1" ? "Guest" : num === "8+" ? "Guests" : "Guests"}
+                                  {num} {num === "1" ? "Qonaq" : "Qonaq"}
                                 </SelectItem>
                               ))}
                             </SelectContent>
@@ -294,10 +384,10 @@ const Reservations = () => {
                     name="specialRequests"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-foreground">Special Requests (Optional)</FormLabel>
+                        <FormLabel className="text-foreground">Xüsusi İstəklər (İstəyə bağlı)</FormLabel>
                         <FormControl>
                           <Textarea
-                            placeholder="Dietary restrictions, special occasions, seating preferences..."
+                            placeholder="Pəhriz məhdudiyyətləri, xüsusi münasibətlər, oturma üstünlükləri..."
                             className="bg-background min-h-[100px]"
                             {...field}
                           />
@@ -307,8 +397,14 @@ const Reservations = () => {
                     )}
                   />
 
-                  <Button type="submit" variant="gold" size="xl" className="w-full">
-                    Confirm Reservation
+                  <Button 
+                    type="submit" 
+                    variant="gold" 
+                    size="xl" 
+                    className="w-full"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? "Göndərilir..." : "Rezervasiyanı Təsdiqlə"}
                   </Button>
                 </form>
               </Form>
@@ -320,8 +416,8 @@ const Reservations = () => {
         <section className="pb-16 bg-background">
           <div className="container-custom max-w-2xl text-center">
             <p className="text-muted-foreground text-sm">
-              We hold reservations for 15 minutes past the booking time. 
-              For cancellations or changes, please call us at least 24 hours in advance.
+              Rezervasiyalar sifariş vaxtından 15 dəqiqə sonraya qədər saxlanılır. 
+              Ləğv etmək və ya dəyişiklik üçün ən azı 24 saat əvvəl bizə zəng edin.
             </p>
           </div>
         </section>
