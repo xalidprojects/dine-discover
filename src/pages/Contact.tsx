@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { MapPin, Phone, Mail, Clock, Send, Check } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, Send, Check, Loader2 } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -17,11 +17,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const contactSchema = z.object({
   name: z.string().min(2, "Ad ən azı 2 simvol olmalıdır"),
   email: z.string().email("Düzgün email ünvanı daxil edin"),
-  subject: z.string().min(5, "Mövzu ən azı 5 simvol olmalıdır"),
+  phone: z.string().optional(),
   message: z.string().min(20, "Mesaj ən azı 20 simvol olmalıdır"),
 });
 
@@ -52,6 +53,7 @@ const contactInfo = [
 
 const Contact = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
   const form = useForm<ContactFormData>({
@@ -59,18 +61,37 @@ const Contact = () => {
     defaultValues: {
       name: "",
       email: "",
-      subject: "",
+      phone: "",
       message: "",
     },
   });
 
-  const onSubmit = (data: ContactFormData) => {
-    console.log("Əlaqə forması:", data);
-    setIsSubmitted(true);
-    toast({
-      title: "Mesaj Göndərildi!",
-      description: "Ən qısa zamanda sizinlə əlaqə saxlayacağıq.",
-    });
+  const onSubmit = async (data: ContactFormData) => {
+    setIsLoading(true);
+    try {
+      const { error } = await supabase.from("contact_messages").insert({
+        name: data.name,
+        email: data.email,
+        phone: data.phone || null,
+        message: data.message,
+      });
+
+      if (error) throw error;
+
+      setIsSubmitted(true);
+      toast({
+        title: "Mesaj Göndərildi!",
+        description: "Ən qısa zamanda sizinlə əlaqə saxlayacağıq.",
+      });
+    } catch (error) {
+      toast({
+        title: "Xəta",
+        description: "Mesaj göndərilə bilmədi. Zəhmət olmasa yenidən cəhd edin.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -190,13 +211,13 @@ const Contact = () => {
                         </div>
                         <FormField
                           control={form.control}
-                          name="subject"
+                          name="phone"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="text-foreground">Mövzu</FormLabel>
+                              <FormLabel className="text-foreground">Telefon (opsional)</FormLabel>
                               <FormControl>
                                 <Input
-                                  placeholder="Bu nə haqqındadır?"
+                                  placeholder="+994 50 123 45 67"
                                   {...field}
                                   className="bg-background"
                                 />
@@ -222,9 +243,9 @@ const Contact = () => {
                             </FormItem>
                           )}
                         />
-                        <Button type="submit" variant="gold" size="lg" className="w-full">
-                          <Send size={18} />
-                          Mesajı Göndər
+                        <Button type="submit" variant="gold" size="lg" className="w-full" disabled={isLoading}>
+                          {isLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Send size={18} />}
+                          {isLoading ? "Göndərilir..." : "Mesajı Göndər"}
                         </Button>
                       </form>
                     </Form>

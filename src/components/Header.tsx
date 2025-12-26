@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
 
 const navLinks = [
   { name: "Ana Səhifə", path: "/" },
@@ -16,6 +17,7 @@ const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const { isAdmin } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -67,6 +69,17 @@ const Header = () => {
 
         {/* Desktop CTA */}
         <div className="hidden lg:flex items-center gap-4">
+          {isAdmin && (
+            <Link
+              to="/admin"
+              className={`p-2 rounded-full transition-colors hover:bg-accent/20 ${
+                isScrolled ? "text-accent" : "text-accent"
+              }`}
+              title="Admin Panel"
+            >
+              <Heart size={24} fill="currentColor" />
+            </Link>
+          )}
           <Button variant="gold" size="lg" asChild>
             <Link to="/reservations">Masa Rezerv Et</Link>
           </Button>
@@ -107,6 +120,15 @@ const Header = () => {
               {link.name}
             </Link>
           ))}
+          {isAdmin && (
+            <Link
+              to="/admin"
+              className="flex items-center gap-2 text-xl font-display font-medium text-accent hover:text-accent/80 transition-all duration-300"
+            >
+              <Heart size={24} fill="currentColor" />
+              Admin Panel
+            </Link>
+          )}
           <Button variant="gold" size="xl" className="mt-4" asChild>
             <Link to="/reservations">Masa Rezerv Et</Link>
           </Button>
