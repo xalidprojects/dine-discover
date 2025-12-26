@@ -31,7 +31,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Plus, Trash2, Edit, LogOut, UtensilsCrossed, Calendar } from "lucide-react";
+import { Loader2, Plus, Trash2, Edit, LogOut, UtensilsCrossed, Calendar, Mail, Eye } from "lucide-react";
 import { format } from "date-fns";
 import { az } from "date-fns/locale";
 
@@ -69,15 +69,26 @@ interface Reservation {
   created_at: string;
 }
 
+interface ContactMessage {
+  id: string;
+  name: string;
+  email: string;
+  phone: string | null;
+  message: string;
+  is_read: boolean;
+  created_at: string;
+}
+
 const Admin = () => {
   const { user, isAdmin, loading, signOut } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   
-  const [activeTab, setActiveTab] = useState<"menu" | "reservations">("menu");
+  const [activeTab, setActiveTab] = useState<"menu" | "reservations" | "messages">("menu");
   const [categories, setCategories] = useState<MenuCategory[]>([]);
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [reservations, setReservations] = useState<Reservation[]>([]);
+  const [messages, setMessages] = useState<ContactMessage[]>([]);
   const [isLoadingData, setIsLoadingData] = useState(true);
   
   // Form state for new menu item
@@ -110,15 +121,17 @@ const Admin = () => {
   const fetchData = async () => {
     setIsLoadingData(true);
     try {
-      const [categoriesRes, itemsRes, reservationsRes] = await Promise.all([
+      const [categoriesRes, itemsRes, reservationsRes, messagesRes] = await Promise.all([
         supabase.from("menu_categories").select("*").order("display_order"),
         supabase.from("menu_items").select("*").order("created_at"),
         supabase.from("reservations").select("*").order("reservation_date", { ascending: true }),
+        supabase.from("contact_messages").select("*").order("created_at", { ascending: false }),
       ]);
 
       if (categoriesRes.data) setCategories(categoriesRes.data);
       if (itemsRes.data) setMenuItems(itemsRes.data);
       if (reservationsRes.data) setReservations(reservationsRes.data);
+      if (messagesRes.data) setMessages(messagesRes.data);
     } catch (error) {
       toast({
         title: "Xəta",
@@ -221,6 +234,43 @@ const Admin = () => {
     setIsDialogOpen(true);
   };
 
+  const handleMarkMessageAsRead = async (id: string, isRead: boolean) => {
+    try {
+      const { error } = await supabase
+        .from("contact_messages")
+        .update({ is_read: !isRead })
+        .eq("id", id);
+      if (error) throw error;
+      toast({ title: "Uğurlu", description: isRead ? "Mesaj oxunmamış kimi işarələndi." : "Mesaj oxunmuş kimi işarələndi." });
+      fetchData();
+    } catch (error) {
+      toast({
+        title: "Xəta",
+        description: "Status yeniləmə zamanı xəta baş verdi.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDeleteMessage = async (id: string) => {
+    if (!confirm("Bu mesajı silmək istədiyinizə əminsiniz?")) return;
+
+    try {
+      const { error } = await supabase.from("contact_messages").delete().eq("id", id);
+      if (error) throw error;
+      toast({ title: "Uğurlu", description: "Mesaj silindi." });
+      fetchData();
+    } catch (error) {
+      toast({
+        title: "Xəta",
+        description: "Silmə zamanı xəta baş verdi.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const unreadMessagesCount = messages.filter(m => !m.is_read).length;
+
   const handleUpdateReservationStatus = async (id: string, status: string) => {
     try {
       const { error } = await supabase
@@ -320,7 +370,7 @@ const Admin = () => {
 
         <section className="py-8 bg-background border-b border-border">
           <div className="container-custom">
-            <div className="flex gap-4">
+            <div className="flex gap-4 flex-wrap">
               <Button
                 variant={activeTab === "menu" ? "gold" : "outline"}
                 onClick={() => setActiveTab("menu")}
@@ -334,6 +384,19 @@ const Admin = () => {
               >
                 <Calendar size={18} className="mr-2" />
                 Rezervasiyalar
+              </Button>
+              <Button
+                variant={activeTab === "messages" ? "gold" : "outline"}
+                onClick={() => setActiveTab("messages")}
+                className="relative"
+              >
+                <Mail size={18} className="mr-2" />
+                Mesajlar
+                {unreadMessagesCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    {unreadMessagesCount}
+                  </span>
+                )}
               </Button>
             </div>
           </div>
@@ -570,7 +633,7 @@ const Admin = () => {
                   </Table>
                 </div>
               </div>
-            ) : (
+            ) : activeTab === "reservations" ? (
               <div>
                 <h2 className="heading-section text-foreground mb-8">Rezervasiyalar</h2>
                 <div className="bg-card rounded-xl border border-border overflow-hidden">
@@ -648,7 +711,80 @@ const Admin = () => {
                   </Table>
                 </div>
               </div>
-            )}
+            ) : activeTab === "messages" ? (
+              <div>
+                <h2 className="heading-section text-foreground mb-8">Müştəri Mesajları</h2>
+                <div className="bg-card rounded-xl border border-border overflow-hidden">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Ad</TableHead>
+                        <TableHead>Əlaqə</TableHead>
+                        <TableHead>Mesaj</TableHead>
+                        <TableHead>Tarix</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead className="text-right">Əməliyyatlar</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {messages.map((msg) => (
+                        <TableRow key={msg.id} className={!msg.is_read ? "bg-accent/5" : ""}>
+                          <TableCell className="font-medium">{msg.name}</TableCell>
+                          <TableCell>
+                            <div className="text-sm">
+                              <p>{msg.email}</p>
+                              {msg.phone && <p className="text-muted-foreground">{msg.phone}</p>}
+                            </div>
+                          </TableCell>
+                          <TableCell className="max-w-xs">
+                            <p className="truncate" title={msg.message}>{msg.message}</p>
+                          </TableCell>
+                          <TableCell>
+                            {format(new Date(msg.created_at), "d MMM yyyy HH:mm", { locale: az })}
+                          </TableCell>
+                          <TableCell>
+                            <span
+                              className={`text-xs px-2 py-1 rounded ${
+                                msg.is_read
+                                  ? "bg-gray-100 text-gray-700"
+                                  : "bg-blue-100 text-blue-700"
+                              }`}
+                            >
+                              {msg.is_read ? "Oxunub" : "Yeni"}
+                            </span>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleMarkMessageAsRead(msg.id, msg.is_read)}
+                              title={msg.is_read ? "Oxunmamış et" : "Oxunmuş et"}
+                            >
+                              <Eye size={16} />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-red-500 hover:text-red-700"
+                              onClick={() => handleDeleteMessage(msg.id)}
+                            >
+                              <Trash2 size={16} />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                      {messages.length === 0 && (
+                        <TableRow>
+                          <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                            Heç bir mesaj tapılmadı
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+            ) : null}
           </div>
         </section>
       </main>
